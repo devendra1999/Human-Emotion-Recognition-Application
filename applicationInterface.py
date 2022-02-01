@@ -36,47 +36,7 @@ def outputProcessing(frame,x,y,w,h,categorical):
 	cv2.putText(frame, EMOTION[7]+" "+str(int(categorical[7]*100)), (x,y+h+128), 
 		cv2.FONT_HERSHEY_SIMPLEX, 0.5, color[7],1, cv2.LINE_AA)
 
-def detectFacesInWebcam():
-	"""Detects facial emotions in webcam feed"""
-	if cnn.loadModel():
-		cap = cv2.VideoCapture(0)
-		while(cap.isOpened()):
-			ret, frame = cap.read()
-			coordinates,gray = d.detectFace(frame,True)
-			for (x,y,w,h) in coordinates:
-				face = cv2.resize(gray[y:y+h,x:x+w],d.FACE_DIMENSIONS)
-				outputProcessing(frame,x,y,w,h,cnn.predictImageLables(face)[0])
-			cv2.imshow('frame',frame)
-			if cv2.waitKey(25) & 0xFF == ord('q'):
-				break
-		cap.release()
-		cv2.destroyAllWindows()
-	else:
-		print("Invalid Model path "+cnn.MODEL_PATH)
 
-def detectFacesInVideo(videoPath):
-	"""Plays the video in the path with facial emotion labels"""
-	if cnn.loadModel():
-		if os.path.exists(videoPath):
-			cap = cv2.VideoCapture(videoPath)
-			while(True):
-				ret, frame = cap.read()
-				if ret:
-					coordinates,gray = d.detectFace(frame,True)
-					for (x,y,w,h) in coordinates:
-						face = cv2.resize(gray[y:y+h,x:x+w],d.FACE_DIMENSIONS)
-						outputProcessing(frame,x,y,w,h,cnn.predictImageLables(face)[0])
-					cv2.imshow('frame',frame)
-					if cv2.waitKey(25) & 0xFF == ord('q'):
-						break
-				else:
-					break
-			cap.release()
-			cv2.destroyAllWindows()
-		else:
-			print("Invalid video path "+videoPath)
-	else:
-		print("Invalid Model path "+cnn.MODEL_PATH)
 
 def detectFacesOnScreen():
 	"""Detects facial emotions of faces on the computer screen"""
